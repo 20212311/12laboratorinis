@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studento informacijos forma</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #resultConsole {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .red {
+      color: red;
+    }
+
+    .orange {
+      color: orange;
+    }
+
+    .green {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="studentForm">
+    <label for="name">Studento vardas:</label>
+    <input type="text" id="name" required>
+
+    <label for="surname">Studento pavardė:</label>
+    <input type="text" id="surname" required>
+
+    <label for="studentId">Pažymėjimo numeris:</label>
+    <input type="number" id="studentId" required>
+
+    <label for="grades">Įveskite 5 pažymius (atskirtus kableliu):</label>
+    <input type="text" id="grades" required>
+
+    <button type="button" onclick="submitForm()">Išsaugoti</button>
+  </form>
+
+  <div id="resultConsole"></div>
+
+  <script>
+    function submitForm() {
+      // Gauname duomenis iš formos
+      var name = document.getElementById('name').value;
+      var surname = document.getElementById('surname').value;
+      var studentId = document.getElementById('studentId').value;
+      var gradesInput = document.getElementById('grades').value;
+
+      // Patikriname pažymėjimo numerio lauką
+      if (!validateStudentId(studentId)) {
+        alert('Netinkamas pažymėjimo numeris!');
+        return;
+      }
+
+      // Konvertuojame pažymius į masyvą
+      var gradesArray = gradesInput.split(',').map(Number);
+
+      // Sukuriame objektą su gautais duomenimis
+      var studentObject = {
+        name: name,
+        surname: surname,
+        studentId: studentId,
+        grades: gradesArray
+      };
+
+      // Atvaizduojame objektą konsolėje
+      console.log(studentObject);
+
+      // Atvaizduojame objektą tinklapyje
+      displayDataOnPage(studentObject);
+
+      // Skaičiuojame vidurkį
+      var averageGrade = calculateAverage(gradesArray);
+
+      // Atvaizduojame vidurkį tinklapyje su spalva
+      displayAverageOnPage(name, surname, studentId, averageGrade);
+    }
+
+    function validateStudentId(studentId) {
+      // Patikriname, ar pažymėjimo numeris yra teigiamas ir neviršija nustatytos ribos
+      return !isNaN(studentId) && studentId > 0 && studentId <= 99999999;
+    }
+    
+
+    function displayDataOnPage(studentObject) {
+      var resultConsole = document.getElementById('resultConsole');
+      resultConsole.innerHTML = '';
+
+      for (var key in studentObject) {
+        resultConsole.innerHTML += key + ': ' + studentObject[key] + '<br>';
+      }
+    }
+
+    function calculateAverage(gradesArray) {
+      var sum = gradesArray.reduce(function (acc, grade) {
+        return acc + grade;
+      }, 0);
+
+      return Math.round(sum / gradesArray.length);
+    }
+
+    function displayAverageOnPage(name, surname, studentId, averageGrade) {
+      var resultConsole = document.getElementById('resultConsole');
+      var textColorClass = '';
+
+      // Nustatome teksto spalvą pagal pažymių vidurkį
+      if (averageGrade <= 4) {
+        textColorClass = 'red';
+      } else if (averageGrade > 4 && averageGrade <= 8) {
+        textColorClass = 'orange';
+      } else {
+        textColorClass = 'green';
+      }
+
+      // Atvaizduojame vidurkį tinklapyje su nustatyta spalva
+      resultConsole.innerHTML += `<br>Vidurkis: <span class="${textColorClass}">${name} ${surname} (${studentId}): ${averageGrade}</span>`;
+    }
+    
+  </script>
+
+</body>
+</html>
